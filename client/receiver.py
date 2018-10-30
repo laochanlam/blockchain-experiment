@@ -69,8 +69,8 @@ def main():
                 receive['index']
             except:
                 block_chain.add_new_transaction(receive)
-                print(transaction)
-            finally:
+                print(receive)
+            else:
                 if block_chain.get_last_block().index != receive['index']:
                     block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['proof'])
                     print ('get a broadcast block! from{}'.format(addr))

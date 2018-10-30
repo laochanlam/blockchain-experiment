@@ -10,19 +10,6 @@ import threading
 import fcntl
 import struct
   
-def get_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        # doesn't even have to be reachable
-        s.connect(('10.255.255.255', 0))
-        IP = s.getsockname()[0]
-    except:
-        IP = '127.0.0.1'
-    finally:
-        s.close()
-    return IP
-    
-
 def send_block(s,block,socket):
     s.sendto(bytes(json.dumps(block),'utf-8'),socket)
 
@@ -43,9 +30,7 @@ def send_blockchain(block_chain):
         connect.sendall(bytes('exit','utf-8'))    
         connect.close()
 
-def main():
-    myip = get_ip()
-    
+def main(): 
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)         # 创建 socket 对象
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST,1)
 
@@ -68,15 +53,13 @@ def main():
         rs,ws,es = select.select(inputs,[],[],0.0) #set timeout 1s
         if rs != []:
             data, addr = s.recvfrom(65536)
-            if addr == myip: 
-                continue
             receive = json.loads(data.decode('utf-8'))
             try:
                 receive['index']
             except:
                 block_chain.add_new_transaction(receive)
-                print(transaction)
-            finally:
+                print(receive)
+            else:
                 if block_chain.get_last_block().index != receive['index']:
                     block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['proof'])
                     print ('get a broadcast block! from{}'.format(addr))
