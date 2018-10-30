@@ -3,6 +3,7 @@
 
 from block import Block
 import random
+import datetime as date
 
 class Blockchain(object):
     def __init__(self):
@@ -10,7 +11,7 @@ class Blockchain(object):
         self.current_transactions = []
     
     def generate_first_block(self):
-        first_block = Block(0,[{
+        first_block = Block(0,date.datetime.now(),[{
             'sender': 0,
             'recipient': 0,
             'amount':1
@@ -19,7 +20,7 @@ class Blockchain(object):
 
     def add_new_block(self,proof):
         previous_block = self.get_last_block()
-        block_to_add = Block(previous_block.index + 1, self.current_transactions, previous_block.getHash(), proof)
+        block_to_add = Block(previous_block.index + 1,date.datetime.now(), self.current_transactions, previous_block.getHash(), proof)
         self.chain.append(block_to_add)
         self.current_transactions = []
 
@@ -34,8 +35,8 @@ class Blockchain(object):
         return self.chain[-1]
     
     def pow(self):
-        target = random.randint(1,600000)
-        proof = random.randint(1,600000)
+        target = random.randint(1,1000000)
+        proof = random.randint(1,1000000)
         if target == proof:
             self.add_new_block(proof)
             return True
@@ -57,4 +58,3 @@ class Blockchain(object):
         block_chain.add_new_block(random.randint(1,100))
     block_chain.display()
     '''
-

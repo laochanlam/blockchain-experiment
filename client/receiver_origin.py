@@ -7,6 +7,21 @@ import select
 from bitcoin import Blockchain
 from block import Block
 import threading
+import fcntl
+import struct
+  
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 0))
+        IP = s.getsockname()[0]
+    except:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+    
 
 def send_block(s,block,socket):
     s.sendto(bytes(json.dumps(block),'utf-8'),socket)
@@ -17,9 +32,11 @@ def send_blockchain(block_chain):
     ss.bind(ip_port)
     ss.listen(5)
     while True:
+        #print ('end')
         connect,addr = ss.accept()
+        #print ('on')
         data = connect.recv(1024)
-
+        #print ('on1')
         for block in block_chain.chain:
             connect.sendall(bytes(json.dumps(block.display()),'utf-8'))
             data = connect.recv(1024)
@@ -27,6 +44,8 @@ def send_blockchain(block_chain):
         connect.close()
 
 def main():
+    myip = get_ip()
+    
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)         # 创建 socket 对象
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST,1)
 
@@ -39,31 +58,18 @@ def main():
     inputs = [s]
 
     block_chain = Blockchain()
+    block_chain.generate_first_block()
 
     t = threading.Thread(target=send_blockchain,args=(block_chain,))
     t.start()
 
-    ip_port=('10.0.0.1',1060)
-    sk = socket.socket()
-    sk.connect(ip_port)
-    sk.sendall(bytes('ok','utf-8'))
-    
-    while True:
-        data = sk.recv(1024)
-        if data == bytes('exit','utf-8'):
-             break
-        print (data)
-        block_json = json.loads(data.decode('utf-8'))
-        block_to_add = Block(block_json['index'],block_json['timestamp'],block_json['transactions'],block_json['pre_hash'],block_json['proof'])
-        block_chain.chain.append(block_to_add)
-        sk.sendall(bytes('ok','utf-8'))
-    sk.close()
 
-    # block_chain.generate_first_block()
     while True:
         rs,ws,es = select.select(inputs,[],[],0.0) #set timeout 1s
         if rs != []:
             data, addr = s.recvfrom(65536)
+            if addr == myip: 
+                continue
             receive = json.loads(data.decode('utf-8'))
             try:
                 receive['index']

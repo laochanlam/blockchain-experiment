@@ -5,9 +5,9 @@ import datetime as date
 import hashlib as hasher
 
 class Block(object):
-    def __init__(self, index, transactions, previous_hash, proof):
+    def __init__(self, index, timestamp, transactions, previous_hash, proof):
         self.index = index
-        self.timestamp = date.datetime.now()
+        self.timestamp = str(timestamp)
         self.transactions = transactions
         self.pre_hash = previous_hash
         self.proof = proof
