@@ -7,6 +7,7 @@ import select
 from bitcoin import Blockchain
 from block import Block
 import threading
+import transaction
 
 def send_block(s,block,socket):
     s.sendto(bytes(json.dumps(block),'utf-8'),socket)
@@ -26,6 +27,9 @@ def send_blockchain(block_chain):
         connect.sendall(bytes('exit','utf-8'))    
         connect.close()
 
+
+
+
 def main():
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)         # 创建 socket 对象
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST,1)
@@ -41,14 +45,14 @@ def main():
     block_chain = Blockchain()
 
     t = threading.Thread(target=send_blockchain,args=(block_chain,))
-    t.start()
+    t.start()  # send blockchain 
 
     ip_port=('10.0.0.1',1060)
     sk = socket.socket()
     sk.connect(ip_port)
     sk.sendall(bytes('ok','utf-8'))
     
-    while True:
+    while True:  # get the whole blockchain
         data = sk.recv(1024)
         if data == bytes('exit','utf-8'):
              break
@@ -59,7 +63,7 @@ def main():
         sk.sendall(bytes('ok','utf-8'))
     sk.close()
 
-    # block_chain.generate_first_block()
+    # runtime
     while True:
         rs,ws,es = select.select(inputs,[],[],0.0) #set timeout 1s
         if rs != []:
@@ -67,11 +71,13 @@ def main():
             receive = json.loads(data.decode('utf-8'))
             try:
                 receive['index']
-            except:
-                block_chain.add_new_transaction(receive)
-                print(receive)
-            else:
-                if block_chain.get_last_block().index != receive['index']:
+            except:  # receive a transaction
+                rec_transaction = rebuild(receive)
+                if verify_transaction(rec_transaction,rec_transaction.a_public_key):
+                    block_chain.add_new_transaction(receive)
+                    print(receive)
+            else:   # receiver a block
+                if block_chain.get_last_block().getHash() == receive['pre_hash']:
                     block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['proof'])
                     print ('get a broadcast block! from{}'.format(addr))
                     block_chain.chain.append(block_to_add)
