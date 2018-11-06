@@ -30,6 +30,10 @@ def send_blockchain(block_chain):
         connect.close()
 
 def main(): 
+
+    # get addr and publickey
+    addr,public_key = get_addr_key()
+
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)         # 创建 socket 对象
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST,1)
 
@@ -65,13 +69,14 @@ def main():
                 if block_chain.get_last_block().getHash() == receive['pre_hash']:
                     block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['proof'])
                     print ('get a broadcast block! from{}'.format(addr))
-                    block_chain.chain.append(block_to_add)
+                    if check_block(block_to_add)
+                        block_chain.chain.append(block_to_add)
             
-        if block_chain.pow():
+        if block_chain.pow(public_key):
             print(block_chain.get_last_block().display())
+            # broadcast a block
             send_block(s,block_chain.get_last_block().display(),(network,port))
 
 if __name__ == '__main__':
     main()
         
-

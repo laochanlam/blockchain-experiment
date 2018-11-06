@@ -3,6 +3,10 @@
 
 import socket
 import json
+from wallet import Wallet
+
+
+
 
 s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) 
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -11,6 +15,9 @@ PORT = 1060
 
 #network = '<broadcast>'
 network = '10.255.255.255'
+
+addr,public_key = get_addr_key()
+my_wallet = Wallet(public_key)
 
 while True:
     print('Please input a transaction')
