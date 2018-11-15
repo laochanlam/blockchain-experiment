@@ -20,3 +20,10 @@ class Pool(object):
 
     def display(self):
         return json.dumps(self.pool, indent=4)
+
+    def isempty(self):
+        # if pool is empty
+        if not self.pool:
+            return False
+        else:
+            return True
