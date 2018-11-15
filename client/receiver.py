@@ -10,6 +10,7 @@ from pool import Pool
 import threading
 import transaction
 import datetime as date
+import hashlib 
 
 def send_block(s,block,socket):
     s.sendto(bytes(json.dumps(block),'utf-8'),socket)
@@ -37,7 +38,20 @@ def pow(block_chain, tx_pool):
         current_transactions.append(tx_pool.pop())
         sum = sum - 1 
     # return nonce and current tx set
-    return 0, current_transactions
+
+    previous_block = block_chain.get_last_block()
+    nonce = 0
+
+    while True:
+        block_to_add = Block(previous_block.index + 1,date.datetime.now(), current_transactions, previous_block.getHash(), nonce)
+        nonce += 1
+        context = json.dumps(new_block)
+        hex_dig = hashlib.sha256(context).hexdigest()
+        if (hex_dig[0] == '0'):
+            break
+
+
+    return block_to_add
 
 
 def main():
@@ -100,9 +114,7 @@ def main():
                         block_chain.chain.append(block_to_add)
 
         # POW
-        nonce, current_transactions = pow(block_chain, tx_pool)
-        previous_block = block_chain.get_last_block()
-        block_to_add = Block(previous_block.index + 1,date.datetime.now(), current_transactions, previous_block.getHash(), nonce)
+        block_to_add = pow(block_chain, tx_pool)
         block_chain.chain.append(block_to_add)
 
         print(block_chain.get_last_block().display())
