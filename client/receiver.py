@@ -4,10 +4,12 @@
 import socket               # 导入 socket 模块
 import json
 import select
-from bitcoin import Blockchain
+from blockchain import Blockchain
 from block import Block
+from pool import Pool
 import threading
 import transaction
+import datetime as date
 
 def send_block(s,block,socket):
     s.sendto(bytes(json.dumps(block),'utf-8'),socket)
@@ -28,6 +30,14 @@ def send_blockchain(block_chain):
         connect.close()
 
 
+def pow(block_chain, tx_pool):
+    current_transactions = []
+    sum = 9
+    while ((not tx_pool.isempty()) and (sum>0)): 
+        current_transactions.append(tx_pool.pop())
+        sum = sum - 1 
+    # return nonce and current tx set
+    return 0, current_transactions
 
 
 def main():
@@ -46,6 +56,8 @@ def main():
     inputs = [s]
 
     block_chain = Blockchain()
+    tx_pool = Pool()
+
 
     t = threading.Thread(target=send_blockchain,args=(block_chain,))
     t.start()  # send blockchain 
@@ -77,7 +89,8 @@ def main():
             except:  # receive a transaction
                 rec_transaction = rebuild(receive)
                 if verify_transaction(rec_transaction,rec_transaction.a_public_key):
-                    block_chain.add_new_transaction(receive)
+                    # block_chain.add_new_transaction(receive)
+                    tx_pool.push(receive)
                     print(receive)
             else:   # receiver a block
                 if block_chain.get_last_block().getHash() == receive['pre_hash']:
@@ -85,11 +98,16 @@ def main():
                     print ('get a broadcast block! from{}'.format(addr))
                     if check_block(block_to_add):
                         block_chain.chain.append(block_to_add)
-            
-        if block_chain.pow(public_key):
-            print(block_chain.get_last_block().display())
-            # broadcast a block
-            send_block(s,block_chain.get_last_block().display(),(network,port))
+
+        # POW
+        nonce, current_transactions = pow(block_chain, tx_pool)
+        previous_block = block_chain.get_last_block()
+        block_to_add = Block(previous_block.index + 1,date.datetime.now(), current_transactions, previous_block.getHash(), nonce)
+        block_chain.chain.append(block_to_add)
+
+        print(block_chain.get_last_block().display())
+        # broadcast a block
+        send_block(s,block_chain.get_last_block().display(),(network,port))
 
 if __name__ == '__main__':
     main()
