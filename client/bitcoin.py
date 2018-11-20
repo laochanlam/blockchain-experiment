@@ -11,7 +11,7 @@ class Blockchain(object):
     def __init__(self):
         self.chain = [] # use array
         self.transaction_pool = Pool()
-    aaa
+        
     def generate_first_block(self):
         first_block = Block(0,date.datetime.now(),[{
             'a_addr': '0'
