@@ -4,7 +4,7 @@
 import socket               # 导入 socket 模块
 import json
 import select
-from bitcoin import Blockchain
+from blockchain import Blockchain
 from block import Block
 import threading
 import transaction

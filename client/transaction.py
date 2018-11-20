@@ -9,6 +9,7 @@ class Transaction(object):
         self.a_value = a_value
         self.b_value = b_value
         self.unspent = unspent_list
+        self.signature = None
     
     def get_signature(self,secret_key):
         # add digital signature
