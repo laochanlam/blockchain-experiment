@@ -6,7 +6,7 @@ from transaction import Transaction
 from pool import Pool
 import random
 import datetime as date
-
+cc
 class Blockchain(object):
     def __init__(self):
         self.chain = [] # use array
