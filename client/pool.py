@@ -15,6 +15,7 @@ class Pool(object):
         
     def pop(self):
         # pop the transaction with largest b_value
+        # add verify transaction #########################
         max_element = max(self.pool, key=lambda x:x['b_value'])
         return self.pool.pop(self.pool.index(max_element))
 

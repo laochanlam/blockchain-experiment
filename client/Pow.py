@@ -23,8 +23,8 @@ def proof_of_work(my_publickey, block_chain, tx_pool,s,soc):
             'a_public_key': '0',
             'b_addr': my_publickey,
             'b_public_key': my_publickey,
-            'a_value': 0,
-            'b_value': 50,
+            'a_value': 0.0,
+            'b_value': 50.0,
             'unspent': [],
             'signature': '0'
         }
@@ -42,7 +42,10 @@ def proof_of_work(my_publickey, block_chain, tx_pool,s,soc):
             if (hex_dig[0:5] == '0'*5):
                 break
 
-        block_chain.chain.append(block_to_add)
-        print(block_chain.get_last_block().display())
-        # broadcast a block
-        send_block(s,block_chain.get_last_block().display(),soc)
+        if check_block(block_chain.chain,block_to_add):
+            block_chain.chain.append(block_to_add)
+            print(block_chain.get_last_block().display())
+            # broadcast a block
+            send_block(s,block_chain.get_last_block().display(),soc)
+        else:
+            print('fails')

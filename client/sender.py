@@ -26,14 +26,16 @@ network = '10.255.255.255'
 
 # runtime
 while True:
-    print('Please input a transaction')
-    sender = input('sender: ')
+    print('Please input a new transaction')
     recepient = input('recepient: ')
-    amount = input('amount: ')
+    amount = float(input('amount: ')) 
+    new_transaction = my_wallet.handle_an_order(private_key,public_key,recepient,amount,block_chain.chain)
+    print(new_transaction)
     print('=================')
-    s.sendto(bytes(json.dumps({'sender': sender,
-                               'recepient': recepient,
-                               'amount': amount}),'utf-8'), (network, PORT))
+    if new_transaction != None:
+        s.sendto(bytes(json.dumps(new_transaction),'utf-8'), (network, PORT))
+    else:
+        print('invalid transaction!')
     anymore = input('have next?[y/n]\n')
     if anymore != 'y':
         break

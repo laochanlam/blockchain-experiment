@@ -46,11 +46,13 @@ def main():
             try:
                 receive['index']
             except:  # receive a transaction
-                rec_transaction = rebuild(receive)
-                if verify_transaction(block_chain.chain,rec_transaction,rec_transaction.a_public_key):
-                    #block_chain.add_new_transaction(receive)
+                #rec_transaction = rebuild(receive)
+                print('get a broadcast transaction!')
+                if verify_transaction(block_chain.chain,receive,receive['a_public_key']):
                     tx_pool.push(receive)
-                    print(receive)
+                    print('check transaction true')
+                else:
+                    print('check transaction false')
             else:   # receiver a block
                 if len(block_chain.chain) == 0:
                     has = 0
@@ -66,5 +68,4 @@ def main():
                         print('check block false')
 
 if __name__ == '__main__':
-    main()
-        
+    main()        

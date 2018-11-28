@@ -1,7 +1,9 @@
-import socket               # 导入 socket 模块
+import socket   # 导入 socket 模块
+import select            
 import json
 from blockchain import Blockchain
 from block import Block
+from transaction import *
 
 def send_block(s,block,socket):
     s.sendto(bytes(json.dumps(block),'utf-8'),socket)
@@ -18,7 +20,7 @@ def send_blockchain(block_chain):
         for block in block_chain.chain:
             connect.sendall(bytes(json.dumps(block.display()),'utf-8'))
             data = connect.recv(1024)
-        connect.sendall(bytes('exit','utf-8'))    
+        connect.sendall(bytes('exit','utf-8'))
         connect.close()
 
 def get_whole_chain():
@@ -43,7 +45,7 @@ def get_whole_chain():
 def update_blockchain_sender(block_chain):
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)         # 创建 socket 对象
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST,1)
-    port = 1060                # 设置端口好
+    port = 1060               # 设置端口好 
     s.bind(('',port))
     inputs = [s]
     # runtime
