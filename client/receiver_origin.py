@@ -65,8 +65,6 @@ def main():
                     else:
                         print('check block false')
 
-
-
 if __name__ == '__main__':
     main()
         
