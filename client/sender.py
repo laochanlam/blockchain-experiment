@@ -9,8 +9,8 @@ import sys
 from communicate import *
 from transaction import *
 
-myname = sys.argv[0]
-addr,private_key,public_key = get_addr_key()
+myname = sys.argv[len(sys.argv)-1]
+addr,private_key,public_key = get_addr_key(myname)
 
 block_chain = get_whole_chain()
 t = threading.Thread(target=update_blockchain_sender,args=(block_chain,))

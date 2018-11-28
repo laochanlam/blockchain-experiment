@@ -34,7 +34,7 @@ def get_whole_chain():
              break
         print (data)
         block_json = json.loads(data.decode('utf-8'))
-        block_to_add = Block(block_json['index'],block_json['timestamp'],block_json['transactions'],block_json['pre_hash'],block_json['proof'])
+        block_to_add = Block(block_json['index'],block_json['timestamp'],block_json['transactions'],block_json['pre_hash'],block_json['nonce'])
         block_chain.chain.append(block_to_add)
         sk.sendall(bytes('ok','utf-8'))
     sk.close()
@@ -54,13 +54,14 @@ def update_blockchain_sender(block_chain):
             receive = json.loads(data.decode('utf-8'))
             try:
                 receive['index']
-            except:  # receive a transaction
-
-            else:   # receiver a block
+            except:
+                # receive a transaction
+                continue
+            else:
+                # receiver a block
                 if block_chain.get_last_block().getHash() == receive['pre_hash']:
-                    block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['proof'])
-                   # print ('get a broadcast block! from{}'.format(addr))
-                    if check_block(block_to_add)
+                    block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['nonce'])
+                    # print ('get a broadcast block! from{}'.format(addr))
+                    if check_block(block_chain.chain,block_to_add):
                         block_chain.chain.append(block_to_add)
-
-
+            

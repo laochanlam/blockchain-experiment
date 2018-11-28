@@ -24,6 +24,6 @@ class Pool(object):
     def isempty(self):
         # if pool is empty
         if not self.pool:
-            return False
-        else:
             return True
+        else:
+            return False

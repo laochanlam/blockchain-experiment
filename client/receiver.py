@@ -18,8 +18,8 @@ import sys
 
 def main():
     # get addr and publickey
-    myname = sys.argv[0]
-    addr,private_key,public_key = get_addr_key()
+    myname = sys.argv[len(sys.argv)-1]
+    addr,private_key,public_key = get_addr_key(myname)
 
     tx_pool = Pool()
     block_chain = get_whole_chain()
@@ -55,17 +55,18 @@ def main():
             else:   # receiver a block
                 if len(block_chain.chain) == 0:
                     has = 0
-                else
+                else:
                     has = block_chain.get_last_block().getHash()
                 if has == receive['pre_hash']:
-                    block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['proof'])
+                    block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['nonce'])
                     print ('get a broadcast block! from{}'.format(addr))
-                    if check_block(block_to_add):
-                        block_chain.chain.append(block_chain.chain,block_to_add)
+                    if check_block(block_chain.chain,block_to_add):
+                        print('check block true')
+                        block_chain.chain.append(block_to_add)
+                    else:
+                        print('check block false')
 
         
-
-
 if __name__ == '__main__':
     main()
         

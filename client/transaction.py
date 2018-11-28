@@ -4,6 +4,8 @@ from Crypto.Cipher import PKCS1_v1_5 as Cipher_pkcs1_v1_5
 from Crypto.Signature import PKCS1_v1_5 as Signature_pkcs1_v1_5
 from Crypto.PublicKey import RSA
 from block import Block
+import hashlib 
+import json
 import base64
 
 class Transaction(object):
@@ -22,7 +24,7 @@ class Transaction(object):
                   self.b_public_key + self.a_value + self.b_value
         for i, val in enumerate(self.unspent):
              message = message + val[0] + val[1]
-        rsakey = RSA.importKey(secret_key)
+        rsakey = RSA.importKey(bytes(secret_key))
         signer = Signature_pkcs1_v1_5.new(rsakey)
         digest = SHA.new()
         digest.update(message)
@@ -33,13 +35,13 @@ class Transaction(object):
 
     def display(self):
         return {
-            'a_addr': self.a_addr
-            'a_public_key': self.a_public_key
-            'b_addr': self.b_addr
-            'b_public_key': self.b_public_key
-            'a_value': self.a_value
-            'b_value': self.b_value
-            'unspent': self.unspent_list
+            'a_addr': self.a_addr,
+            'a_public_key': self.a_public_key,
+            'b_addr': self.b_addr,
+            'b_public_key': self.b_public_key,
+            'a_value': self.a_value,
+            'b_value': self.b_value,
+            'unspent': self.unspent_list,
             'signature': self.signature
         }
     @staticmethod
@@ -58,12 +60,14 @@ class Transaction(object):
 def search_transaction(public_key,blockchain):
     # get all UTXO from blockchain with public_key
     # return a list of all UTXO's index and total value
-    '''
-    寻找某个公钥拥有的UTXO，返回所有这些UTXO的索引（块号+块中交易号）和总价值
-    return (index,value)
-    '''
+    
+    # 寻找某个公钥拥有的UTXO，返回所有这些UTXO的索引（块号+块中交易号）和总价值
+    # return (index,value)
+    
+
 	unspent_list_of_public_key = []
 	value = 0
+
 	for i in range(len(blockchain)):
 		for j in range(len(blockchain[-i - 1].transactions)):
 			if blockchain[-i - 1].transactions[-j - 1].b_public_key == public_key:
@@ -100,7 +104,7 @@ def verify_transacton(blocks,transaction,public_key):
         if bpk == transaction.a_public_key :
             total_utxo = total_utxo + bvalue
     
-    rsakey = RSA.importKey(public_key)
+    rsakey = RSA.importKey(bytes(public_key))
     verifier = Signature_pkcs1_v1_5.new(rsakey)
     digest = SHA.new()
     # Assumes the data is base64 encoded to begin with
@@ -110,18 +114,18 @@ def verify_transacton(blocks,transaction,public_key):
     return is_verify and total_utxo == transaction.a_value + transaction.b_value
 
 def check_block(blocks, block):
-    '''
-    验证block的hash值以及每一笔交易是否合法，返回true/false
-    '''
-    #verify hash code
-    context = json.dumps(block)
-    hex_dig = hashlib.sha256(context).hexdigest()
-	if hex_dig[0] != '0':
-	   return False
-    #verify transaction
+    # 验证block的hash值以及每一笔交易是否合法，返回true/false
+    # verify hash code
+    context = json.dumps(block.display())
+    hex_dig = hashlib.sha256(context.encode()).hexdigest()
+
+    if hex_dig[0:5] != '0'*5:
+        return False
+
+    # verify transaction
     for i, val in enumerate(block.transactions):
-        if not verify_transaction(blocks, val, val.a_public_key) :
-           return False
+        if (not (i == len(block.transactions) -1)) and (not verify_transaction(blocks, val, val.a_public_key)) :
+            return False
     return True
 
 def generate_account(name):
@@ -129,10 +133,10 @@ def generate_account(name):
     rsa = RSA.generate(1024,random_generator)
     private_pem = rsa.exportKey()
     with open('../userKey/' + name + '-private.pem','w') as f:
-        f.write(private_pem)
+        f.write(str(private_pem))
     public_pem = rsa.publickey().exportKey()
     with open('../userKey/' + name + '-public.pem','w') as f:
-	    f.write(public_pem)
+	    f.write(str(public_pem))
 
 def get_addr_key(name):
     '''
@@ -141,11 +145,12 @@ def get_addr_key(name):
     return (addr, private_key, public_key)
     assuming addr is the same as public_key
     '''
-    with open('../userKey/' + name + '-private.pem') as fpr:
-        prkey = fpr.read()
-    with open('../userKey/' + name + '-public.pem') as fpu:
-        pukey = fpu.read()
-    if prkey == '' or pukey == '':
+    try:
+        with open('../userKey/' + name + '-private.pem') as fpr:
+            prkey = fpr.read()
+        with open('../userKey/' + name + '-public.pem') as fpu:
+            pukey = fpu.read()
+    except:
         generate_account(name)
         with open('../userKey/' + name + '-private.pem') as fpr:
             prkey = fpr.read()

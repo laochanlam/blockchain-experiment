@@ -15,36 +15,16 @@ import datetime as date
 import hashlib 
 import sys
   
-def send_block(s,block,socket):
-    s.sendto(bytes(json.dumps(block),'utf-8'),socket)
-
-def send_blockchain(block_chain):
-    ss = socket.socket()
-    ip_port = ('',1060)
-    ss.bind(ip_port)
-    ss.listen(5)
-    while True:
-        #print ('end')
-        connect,addr = ss.accept()
-        #print ('on')
-        data = connect.recv(1024)
-        #print ('on1')
-        for block in block_chain.chain:
-            connect.sendall(bytes(json.dumps(block.display()),'utf-8'))
-            data = connect.recv(1024)
-        connect.sendall(bytes('exit','utf-8'))    
-        connect.close()
-
 def main(): 
     # get addr and publickey
-    myname = sys.argv[0]
-    addr,private_key,public_key = get_addr_key()
+    myname = sys.argv[len(sys.argv)-1]
+    addr,private_key,public_key = get_addr_key(myname)
 
     tx_pool = Pool()
     block_chain = Blockchain()
 
     t1 = threading.Thread(target=send_blockchain,args=(block_chain,))
-    t1.start()
+    t1.start()  # send blockchain 
 
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)         # 创建 socket 对象
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST,1)
@@ -74,13 +54,16 @@ def main():
             else:   # receiver a block
                 if len(block_chain.chain) == 0:
                     has = 0
-                else
+                else:
                     has = block_chain.get_last_block().getHash()
                 if has == receive['pre_hash']:
-                    block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['proof'])
+                    block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['nonce'])
                     print ('get a broadcast block! from{}'.format(addr))
-                    if check_block(block_chain.chain,block_to_add)
+                    if check_block(block_chain.chain,block_to_add):
+                        print('check block true')
                         block_chain.chain.append(block_to_add)
+                    else:
+                        print('check block false')
 
 
 
