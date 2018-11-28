@@ -128,10 +128,10 @@ def generate_account(name):
     random_generator = Random.new().read
     rsa = RSA.generate(1024,random_generator)
     private_pem = rsa.exportKey()
-    with open(name + '-private.pem','w') as f:
+    with open('../userKey/' + name + '-private.pem','w') as f:
         f.write(private_pem)
     public_pem = rsa.publickey().exportKey()
-    with open(name + '-public.pem','w') as f:
+    with open('../userKey/' + name + '-public.pem','w') as f:
 	    f.write(public_pem)
 
 def get_addr_key(name):
@@ -141,14 +141,14 @@ def get_addr_key(name):
     return (addr, private_key, public_key)
     assuming addr is the same as public_key
     '''
-    with open(name + '-private.pem') as fpr:
+    with open('../userKey/' + name + '-private.pem') as fpr:
         prkey = fpr.read()
-    with open(name + '-public.pem') as fpu:
+    with open('../userKey/' + name + '-public.pem') as fpu:
         pukey = fpu.read()
     if prkey == '' or pukey == '':
         generate_account(name)
-        with open(name + '-private.pem') as fpr:
+        with open('../userKey/' + name + '-private.pem') as fpr:
             prkey = fpr.read()
-        with open(name + '-public.pem') as fpu:
+        with open('../userKey/' + name + '-public.pem') as fpu:
             pukey = fpu.read()
     return (pukey, prkey, pukey)

@@ -3,22 +3,28 @@
 
 import socket
 import json
+import threading
 from wallet import Wallet
+import sys
+from communicate import *
+from transaction import *
 
+myname = sys.argv[0]
+addr,private_key,public_key = get_addr_key()
 
+block_chain = get_whole_chain()
+t = threading.Thread(target=update_blockchain_sender,args=(block_chain,))
+t.start()  # update blockchain 
 
+my_wallet = Wallet(public_key)
 
 s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) 
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-
 PORT = 1060
-
 #network = '<broadcast>'
 network = '10.255.255.255'
 
-addr,public_key = get_addr_key()
-my_wallet = Wallet(public_key)
-
+# runtime
 while True:
     print('Please input a transaction')
     sender = input('sender: ')
