@@ -23,8 +23,11 @@ def proof_of_work(my_publickey, block_chain, tx_pool,s,soc):
         nonce = 0
 
         while True:
-            previous_block = block_chain.get_last_block()
-            block_to_add = Block(previous_block.index + 1,date.datetime.now(), current_transactions, previous_block.getHash(), nonce)
+            if len(block_chain.chain) != 0:
+                previous_block = block_chain.get_last_block()
+                block_to_add = Block(previous_block.index + 1,date.datetime.now(), current_transactions, previous_block.getHash(), nonce)
+            else
+                block_to_add = Block(0,date.datetime.now(), current_transactions, 0, nonce)
             nonce += 1
             context = json.dumps(block_to_add)
             hex_dig = hashlib.sha256(context).hexdigest()

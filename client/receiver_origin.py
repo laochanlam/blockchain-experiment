@@ -42,7 +42,6 @@ def main():
 
     tx_pool = Pool()
     block_chain = Blockchain()
-    block_chain.generate_first_block()
 
     t1 = threading.Thread(target=send_blockchain,args=(block_chain,))
     t1.start()
@@ -69,10 +68,15 @@ def main():
             except:  # receive a transaction
                 rec_transaction = rebuild(receive)
                 if verify_transaction(block_chain.chain,rec_transaction,rec_transaction.a_public_key):
-                    block_chain.add_new_transaction(receive)
+                    #block_chain.add_new_transaction(receive)
+                    tx_pool.push(receive)
                     print(receive)
             else:   # receiver a block
-                if block_chain.get_last_block().getHash() == receive['pre_hash']:
+                if len(block_chain.chain) == 0:
+                    has = 0
+                else
+                    has = block_chain.get_last_block().getHash()
+                if has == receive['pre_hash']:
                     block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['proof'])
                     print ('get a broadcast block! from{}'.format(addr))
                     if check_block(block_chain.chain,block_to_add)

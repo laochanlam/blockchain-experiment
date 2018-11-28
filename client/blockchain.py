@@ -10,8 +10,7 @@ import datetime as date
 class Blockchain(object):
     def __init__(self):
         self.chain = [] # use array
-        self.transaction_pool = Pool()
-        
+'''       
     def generate_first_block(self):
         first_block = Block(0,date.datetime.now(),[{
             'a_addr': '0',
@@ -38,6 +37,7 @@ class Blockchain(object):
         block_to_add = Block(previous_block.index + 1,date.datetime.now(), current_transactions, previous_block.getHash(), proof)
         self.chain.append(block_to_add)
             
+'''
     # def add_new_transaction(self, transaction):
     #     self.transaction_pool.push(transaction)
 

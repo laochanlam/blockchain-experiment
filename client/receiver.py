@@ -53,7 +53,11 @@ def main():
                     tx_pool.push(receive)
                     print(receive)
             else:   # receiver a block
-                if block_chain.get_last_block().getHash() == receive['pre_hash']:
+                if len(block_chain.chain) == 0:
+                    has = 0
+                else
+                    has = block_chain.get_last_block().getHash()
+                if has == receive['pre_hash']:
                     block_to_add = Block(receive['index'],receive['timestamp'],receive['transactions'],receive['pre_hash'],receive['proof'])
                     print ('get a broadcast block! from{}'.format(addr))
                     if check_block(block_to_add):
