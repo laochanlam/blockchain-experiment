@@ -10,7 +10,7 @@ from pool import Pool
 import threading
 from transaction import *
 from communicate import *
-from Pow import *
+from mining import *
 import datetime as date
 import hashlib 
 import sys
