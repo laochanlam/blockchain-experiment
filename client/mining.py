@@ -30,6 +30,7 @@ def proof_of_work(my_publickey, block_chain, tx_pool,s,soc):
         }
         current_transactions.append(mining_transaction)
         nonce = 0
+        ############################################ need to verify transactions by a new array without overlay
         while True:
             if len(block_chain.chain) != 0:
                 previous_block = block_chain.get_last_block()

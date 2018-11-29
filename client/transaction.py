@@ -62,6 +62,7 @@ def search_transaction(public_key,blockchain):
     # return a list of all UTXO's index and total value
     # 寻找某个公钥拥有的UTXO，返回所有这些UTXO的索引（块号+块中交易号）和总价值
     # return (index,value)  
+    # need a new algorithm ################################
     
     unspent_list_of_public_key = []
     value = 0
