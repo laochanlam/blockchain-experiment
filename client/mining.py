@@ -14,10 +14,13 @@ def proof_of_work(my_publickey, block_chain, tx_pool,s,soc):
         current_transactions = []
         sum = 9
         while ((not tx_pool.isempty()) and (sum>0)): 
-            current_transactions.append(tx_pool.pop())
-            sum = sum - 1 
+            add = tx_pool.pop(block_chain.chain)
+            if (add != None):
+                current_transactions.append(add)
+                sum = sum - 1 
         # return nonce and current tx set
         # add myself mining
+
         mining_transaction = {
             'a_addr': '0',
             'a_public_key': '0',

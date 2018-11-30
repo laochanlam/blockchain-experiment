@@ -1,4 +1,5 @@
 from sortedcontainers import SortedDict
+from transaction import verify_transaction
 import json
 
 # transaction pool
@@ -13,10 +14,18 @@ class Pool(object):
         # True stand for success
         return True
         
-    def pop(self):
+    def pop(self,blocks):
         # pop the transaction with largest b_value
-        # add verify transaction #########################
+        # add verify transaction ######################### finished
+
         max_element = max(self.pool, key=lambda x:x['b_value'])
+        while not verify_transaction(blocks,max_element,max_element['a_public_key']):
+            self.pool.pop(self.pool.index(max_element)) 
+            print('fails')
+            if len(self.pool) == 0:
+                return None
+            max_element = max(self.pool, key=lambda x:x['b_value'])
+
         return self.pool.pop(self.pool.index(max_element))
 
     def display(self):

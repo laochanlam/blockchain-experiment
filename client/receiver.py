@@ -15,7 +15,6 @@ import datetime as date
 import hashlib 
 import sys
 
-
 def main():
     # get addr and publickey
     myname = sys.argv[len(sys.argv)-1]
