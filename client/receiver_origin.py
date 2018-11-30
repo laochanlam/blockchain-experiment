@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
-
+'''
+    初始矿机，用来挖矿以及接收和广播消息
+'''
 import socket               # 导入 socket 模块
 import json
 import select

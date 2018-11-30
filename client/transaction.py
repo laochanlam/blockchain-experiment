@@ -62,7 +62,7 @@ def search_transaction(public_key,blockchain):
     # return a list of all UTXO's index and total value
     # 寻找某个公钥拥有的UTXO，返回所有这些UTXO的索引（块号+块中交易号）和总价值
     # return (index,value)  
-    # need a new algorithm ################################ finished
+    # need a new algorithm ################################ 
     
     unspent_list_of_public_key = []
     value = 0
@@ -73,8 +73,6 @@ def search_transaction(public_key,blockchain):
         for j in range(len(blockchain[-i - 1].transactions)):
             if blockchain[-i - 1].transactions[-j - 1]['b_public_key'] == public_key:
                 unspent_list_of_public_key.append((length - i - 1,len(blockchain[-i - 1].transactions) - j - 1))
-                if len(blockchain[-i - 1].transactions[-j - 1]['unspent']) > 0:
-                    end = max(end , blockchain[-i - 1].transactions[-j - 1]['unspent'][-1][0] + 1)
                 value += blockchain[-i - 1].transactions[-j - 1]['b_value']
             elif blockchain[-i - 1].transactions[-j - 1]['a_public_key'] == public_key:
                 unspent_list_of_public_key.append((length - i - 1,len(blockchain[-i - 1].transactions) - j - 1))
@@ -93,7 +91,7 @@ def create_transaction(a_addr,a_public_key,b_addr,b_public_key,a_value,b_value,u
 def verify_transaction(blocks,transaction,public_key):
     # check the signature with A's public_key
     # check the A's history UTXO
-    # verify existed transaction ###################### finished
+    # verify existed transaction and its unspent list ###################### 
     '''
     收到一个交易，验证该交易的数字签名是否与发出者的公钥相匹配，若匹配，进一步验证发送者的交易是否合法
     '''
@@ -133,6 +131,11 @@ def check_block(blocks, block):
     if hex_dig[0:5] != '0'*5:
         return False
 
+    # verify repeated transactions in one block
+    for i in range(len(block.transactions)):
+        for j in range(i):
+            if (block.transactions[i]['a_public_key'] == block.transactions[j]['a_public_key']):
+                return False
     # verify transaction
     for i, val in enumerate(block.transactions):
         if (not (i == len(block.transactions) -1)) and (not verify_transaction(blocks, val, val['a_public_key'])) :

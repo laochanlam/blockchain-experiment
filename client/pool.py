@@ -15,13 +15,12 @@ class Pool(object):
         return True
         
     def pop(self,blocks):
-        # pop the transaction with largest b_value
-        # add verify transaction ######################### finished
-
+        # pop the transaction with largest b_value   
+         # verify transaction overtime caused by block updating
         max_element = max(self.pool, key=lambda x:x['b_value'])
         while not verify_transaction(blocks,max_element,max_element['a_public_key']):
             self.pool.pop(self.pool.index(max_element)) 
-            print('fails')
+            print('transaction overtime!')
             if len(self.pool) == 0:
                 return None
             max_element = max(self.pool, key=lambda x:x['b_value'])

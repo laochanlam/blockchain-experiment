@@ -31,7 +31,7 @@ def get_whole_chain():
     block_chain = Blockchain()
 
     while True:  # get the whole blockchain
-        data = sk.recv(1024)
+        data = sk.recv(65536)
         if data == bytes('exit','utf-8'):
              break
         print (data)
