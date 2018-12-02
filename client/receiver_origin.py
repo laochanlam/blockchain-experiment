@@ -68,6 +68,9 @@ def main():
                         block_chain.chain.append(block_to_add)
                     else:
                         print('check block false')
+                elif receive['transactions'][-1]['b_public_key'] != public_key:
+                    # 出现分叉！
+                    print('fork!')
 
 if __name__ == '__main__':
     main()        
