@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
-
 '''
     矿机，用来挖矿以及接收和广播消息
 '''
@@ -19,8 +18,13 @@ import hashlib
 import sys
 
 def main():
+
+    if len(sys.argv) != 2:
+        print('Usage : %s <name>' % sys.argv[0])
+        sys.exit(1)
     # get addr and publickey
     myname = sys.argv[len(sys.argv)-1]
+    print('\n###########################################################\nUserName: ' + myname)
     addr,private_key,public_key = get_addr_key(myname)
 
     tx_pool = Pool()
@@ -35,7 +39,7 @@ def main():
     port = 1060                # 设置端口好
     s.bind(('',port))
     inputs = [s]
-    
+
     # POW
     t2 = threading.Thread(target=proof_of_work,args=(public_key, block_chain, tx_pool,s,(network,port),))
     t2.start()  
@@ -69,7 +73,7 @@ def main():
                         block_chain.chain.append(block_to_add)
                     else:
                         print('check block false')
-                elif receive['transactions'][-1]['b_public_key'] != public_key: 
+                elif receive['transactions'][-1]['b_public_key'] != public_key:
                     # 出现分叉！
                     print('fork!')
 

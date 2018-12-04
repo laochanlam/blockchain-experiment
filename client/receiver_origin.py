@@ -16,10 +16,15 @@ from mining import *
 import datetime as date
 import hashlib 
 import sys
-  
-def main(): 
+
+def main():
+
+    if len(sys.argv) != 2:
+        print('Usage : %s <name>' % sys.argv[0])
+        sys.exit(1)
     # get addr and publickey
     myname = sys.argv[len(sys.argv)-1]
+    print('\n###########################################################\nUserName: ' + myname)
     addr,private_key,public_key = get_addr_key(myname)
 
     tx_pool = Pool()
@@ -73,4 +78,4 @@ def main():
                     print('fork!')
 
 if __name__ == '__main__':
-    main()        
+    main()

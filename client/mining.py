@@ -59,6 +59,7 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
         nonce = 0
 
         pre_previous_block = None
+        print('doing PoW...')
         while True:
             if len(block_chain.chain) != 0:
                 previous_block = block_chain.get_last_block()
@@ -77,7 +78,9 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
 
         if check_block(block_chain.chain,block_to_add):
             block_chain.chain.append(block_to_add)
-            print(block_chain.get_last_block().display())
+            print('###############new block is generated######################')
+            print(json.dumps(block_chain.get_last_block().display(), indent=4))   
+            print('###########################################################')
             # broadcast a block
             send_block(s,block_chain.get_last_block().display(),soc)
         else:

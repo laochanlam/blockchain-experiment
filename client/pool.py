@@ -1,4 +1,3 @@
-from sortedcontainers import SortedDict
 from transaction import verify_transaction
 import json
 

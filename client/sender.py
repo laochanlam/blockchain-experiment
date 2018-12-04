@@ -13,6 +13,10 @@ import sys
 from communicate import *
 from transaction import *
 
+if len(sys.argv) != 2:
+    print('Usage : %s <name>' % sys.argv[0])
+    sys.exit(1)
+    
 myname = sys.argv[len(sys.argv)-1]
 addr,private_key,public_key = get_addr_key(myname)
 
