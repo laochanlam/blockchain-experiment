@@ -33,9 +33,9 @@ def get_whole_chain():
     while True:  # get the whole blockchain
         data = sk.recv(65536)
         if data == bytes('exit','utf-8'):
-             break
-        print (data)
+             break       
         block_json = json.loads(data.decode('utf-8'))
+        print (json.dumps(block_json,indent = 4))
         block_to_add = Block(block_json['index'],block_json['timestamp'],block_json['transactions'],block_json['pre_hash'],block_json['nonce'])
         block_chain.chain.append(block_to_add)
         sk.sendall(bytes('ok','utf-8'))

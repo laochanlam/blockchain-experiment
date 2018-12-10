@@ -34,15 +34,8 @@ def update_transactions(blocks,transactions):
 def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
     while True:
         current_transactions = []
-        sum = 9
-        while ((not tx_pool.isempty()) and (sum>0)): 
-            add = tx_pool.pop(block_chain.chain)
-            if (add != None):
-                current_transactions.append(add)
-                sum = sum - 1 
         # return nonce and current tx set
-        # add myself mining
-        current_transactions = handle_overlay(current_transactions)
+        # add myself mining 
 
         mining_transaction = {
             'a_addr': '0',
@@ -61,6 +54,11 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
         pre_previous_block = None
         print('doing PoW...')
         while True:
+            while ((not tx_pool.isempty()) and (len(current_transactions)<9)): 
+                add = tx_pool.pop(block_chain.chain)
+                if (add != None):
+                    current_transactions.insert(0,add)
+                    current_transactions = handle_overlay(current_transactions)
             if len(block_chain.chain) != 0:
                 previous_block = block_chain.get_last_block()
                 # handle transaction overtime caused by block updating

@@ -39,7 +39,7 @@ while True:
     recepient = input('recepient: ')
     amount = float(input('amount: ')) 
     new_transaction = my_wallet.handle_an_order(private_key,public_key,recepient,amount,block_chain.chain)
-    print(new_transaction)
+    print(json.dumps(new_transaction,indent = 4))
     print('=================')
     if new_transaction != None:
         s.sendto(bytes(json.dumps(new_transaction),'utf-8'), (network, PORT))
