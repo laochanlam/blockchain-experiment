@@ -77,8 +77,9 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
         if check_block(block_chain.chain,block_to_add):
             block_chain.chain.append(block_to_add)
             print('###############new block is generated######################')
-            print(json.dumps(block_chain.get_last_block().display(), indent=4))   
-            print('###########################################################')
+            # print(json.dumps(block_chain.get_last_block().display(), indent=4))   
+            # print('info ignored')
+            # print('###########################################################')
             # broadcast a block
             send_block(s,block_chain.get_last_block().display(),soc)
         else:

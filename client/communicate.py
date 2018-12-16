@@ -35,11 +35,12 @@ def get_whole_chain():
         if data == bytes('exit','utf-8'):
              break       
         block_json = json.loads(data.decode('utf-8'))
-        print (json.dumps(block_json,indent = 4))
+        # print (json.dumps(block_json,indent = 4))
         block_to_add = Block(block_json['index'],block_json['timestamp'],block_json['transactions'],block_json['pre_hash'],block_json['nonce'])
         block_chain.chain.append(block_to_add)
         sk.sendall(bytes('ok','utf-8'))
     sk.close()
+    print('######Received blockchain with length: ' + str(len(block_chain.chain))  + ' ########')
     return block_chain
 
 def update_blockchain_sender(block_chain):
