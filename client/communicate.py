@@ -4,8 +4,10 @@ import json
 from blockchain import Blockchain
 from block import Block
 from transaction import *
+import time
 
 def send_block(s,block,socket):
+    print("[Send block "  + str(block['index']) + ' at: ' + str(time.time()) + ']')
     s.sendto(bytes(json.dumps(block),'utf-8'),socket)
 
 def send_blockchain(block_chain):
