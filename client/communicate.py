@@ -5,8 +5,11 @@ from blockchain import Blockchain
 from block import Block
 from transaction import *
 import time
+import os
 
 def send_block(s,block,socket):
+    with open('info.log', 'a') as f:
+        f.write('%s\t%s\t%s\t%s\n' % (os.getpid(), 'send', str(block['index']), str(time.time())))
     print("[Send block "  + str(block['index']) + ' at: ' + str(time.time()) + ']')
     s.sendto(bytes(json.dumps(block),'utf-8'),socket)
 

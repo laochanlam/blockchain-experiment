@@ -49,6 +49,7 @@ def main():
         rs,ws,es = select.select(inputs,[],[],0.0) #set timeout 1s
         if rs != []:
             data, addr = s.recvfrom(65536)
+            receive_time = time.time()
             receive = json.loads(data.decode('utf-8'))
             try:
                 receive['index']
@@ -61,6 +62,9 @@ def main():
                 else:
                     print('check transaction false')
             else:   # receiver a block
+                with open('info.log', 'a') as f:
+                    f.write('%s\t%s\t%s\t%s\n' % (os.getpid(), 'receive', str(receive['index']), str(receive_time)))
+                print("[Receive block " + str(receive['index']) + " at: " + str(receive_time) + ']')
                 if len(block_chain.chain) == 0:
                     has = 0
                 else:
