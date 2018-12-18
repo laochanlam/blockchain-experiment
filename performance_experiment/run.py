@@ -47,17 +47,21 @@ if __name__ == '__main__':
     h3 = net.get('h3')
     h4 = net.get('h4')
     # origin_receiver
-    t1 = threading.Thread(target=run_origin_receiver, args=(h1,))
-    t1.daemon = True
+    t1 = threading.Thread(target=run_origin_receiver, args=(h1,))   
     # receiver
     t2 = threading.Thread(target=run_receiver, args=(h2,))
     t3 = threading.Thread(target=run_receiver, args=(h3,))
     t4 = threading.Thread(target=run_receiver, args=(h4,))
-    t1.start()
 
-    print('wait until origin_receiver generate 1 blocks....')
+    t1.daemon = True
+    t2.daemon = True
+    t3.daemon = True
+    t4.daemon = True
+
+    t1.start()
+    print('wait until origin_receiver generates 1 block....')
     # wait until origin_receiver generate 1 blocks.
-    while ( sum(1 for line in open('info.log')) < 2):
+    while (sum(1 for line in open('info.log')) < 2):
         # print(sum(1 for line in open('info.log')))
         time.sleep(1)
     
@@ -66,6 +70,16 @@ if __name__ == '__main__':
     t2.start()
     t3.start()
     t4.start()
-    
-    time.sleep(100000)  
+
+
+    chain_length = 1
+    while (chain_length < 20):
+        with open('info.log', 'r') as f:
+            lines = f.readlines()
+            line = lines[-1].split()
+            chain_length = int(line[2])
+        time.sleep(1)
+
+    print('20 blocks have been generated, the experiment is completed, Exit!')
+    time.sleep(999999)
     net.stop()
