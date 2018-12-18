@@ -3,6 +3,7 @@ from mininet.net import Mininet
 from mininet.cli import CLI
 from mininet.util import dumpNodeConnections
 from mininet.node import OVSController
+from mininet.link import TCLink
 import threading
 import time
 
@@ -26,13 +27,13 @@ class Startopo( Topo ):
                 ip_ = '10.0.0.' + counter
                 mac_ ='00:00:00:00:00:0' + counter
                 host = self.addHost(hostname, ip=ip_, mac=mac_)
-                self.addLink(hostname, s0)
+                self.addLink(hostname, s0, bw=1)
                 hosts.append(host)
                 
 
 if __name__ == '__main__':
     topo = Startopo()
-    net = Mininet(topo, controller=OVSController)
+    net = Mininet(topo, controller=OVSController, link=TCLink)
     net.start()
     
     # erase file context

@@ -79,6 +79,8 @@ def main():
                         print('check block false')
                 elif receive['transactions'][-1]['b_public_key'] != public_key:
                     # 出现分叉！
+                    with open('info.log', 'a') as f:
+                        f.write('%s\t%s\t%s\n' % (os.getpid(), 'fork', str(receive['index'])))
                     print('fork!')
 
 if __name__ == '__main__':
