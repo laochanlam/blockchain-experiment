@@ -1,6 +1,7 @@
 import socket   # 导入 socket 模块
 import select            
 import json
+import threading
 from blockchain import Blockchain
 from block import Block
 from transaction import *
