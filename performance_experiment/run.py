@@ -31,7 +31,7 @@ class Startopo( Topo ):
                 ip_ = '10.0.0.' + counter
                 mac_ ='00:00:00:00:00:0' + counter
                 host = self.addHost(hostname, ip=ip_, mac=mac_)
-                self.addLink(hostname, s0, bw=0.01)
+                self.addLink(hostname, s0, bw=0.1)
                 hosts.append(host)
                 
 
@@ -86,11 +86,10 @@ if __name__ == '__main__':
     t2.start()
     t3.start()
     t4.start()
-
-    print('wait 100 seconds for all nodes to generate their first block (earn money) and send coins....')
-    time.sleep(95)
+    print('wait 200 seconds for all nodes to generate their first block (earn money) and send coins....')
+    time.sleep(195)
     with open('info.log', 'a') as f:
-        f.write('##################start to measure\n')
+        f.write('start to measure\n')
     
     # Start to send coins
     t2_send.start()
@@ -98,10 +97,11 @@ if __name__ == '__main__':
     t4_send.start()
 
     time.sleep(5)
-    print('100 seconds gone, start to record...')
-
-    
-
+    print('200 seconds gone, start to record...')
+    time.sleep(200)
+    print('recording completed')
+    with open('info.log', 'a') as f:
+        f.write('end of measure\n')
     # chain_length = 1
     # while (chain_length < 20):
     #     with open('info.log', 'r') as f:
