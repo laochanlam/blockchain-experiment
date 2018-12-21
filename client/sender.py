@@ -17,7 +17,7 @@ myname = sys.argv[len(sys.argv)-1]
 addr,private_key,public_key = get_addr_key(myname)
 
 block_chain = get_whole_chain()
-t = threading.Thread(target=update_blockchain_sender,args=(block_chain,))
+t = threading.Thread(target=update_blockchain_sender,args=(block_chain,f))
 t.start()  # update blockchain 
 
 my_wallet = Wallet(public_key)
@@ -38,7 +38,8 @@ while True:
     print(new_transaction)
     print('=================')
     if new_transaction != None:
-        s.sendto(bytes(json.dumps(new_transaction),'utf-8'), (network, PORT))
+        #s.sendto(bytes(json.dumps(new_transaction),'utf-8'), (network, PORT))
+        send_message(s,new_transaction,(network, PORT))
     else:
         print('invalid transaction!')
     anymore = input('have next?[y/n]\n')

@@ -79,6 +79,6 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
             #block_chain.chain.append(block_to_add)
             print(block_to_add.display())
             # broadcast a block
-            send_block(s,block_to_add.display(),soc)
+            send_message(s,block_to_add.display(),soc)
         else:
             print('block overtime!')

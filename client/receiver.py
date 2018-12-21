@@ -35,7 +35,10 @@ def main():
     else:
         print('Usage : {} [origin | user] <name>'.format(sys.argv[0]))
         sys.exit()
-        
+
+    block_pool = []
+    f = 2
+
     t1 = threading.Thread(target=send_blockchain,args=(block_chain,))
     t1.start()  # send blockchain 
 
@@ -85,6 +88,7 @@ def main():
                         print('check block true')
                         # devloping #####################################
                         #block_chain.chain.append(block_to_add)
+                        block_pool.append(block_to_add)
                         signing_commit(block_to_add,True,public_key)
                     else:
                         print('check block false')
