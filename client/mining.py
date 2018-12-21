@@ -54,7 +54,7 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
         pre_previous_block = None
         print('doing PoW...')
         while True:
-            while ((not tx_pool.isempty()) and (len(current_transactions)<9)): 
+            while ((not tx_pool.isempty()) and (len(current_transactions)<3)): 
                 add = tx_pool.pop(block_chain.chain)
                 if (add != None):
                     current_transactions.insert(0,add)

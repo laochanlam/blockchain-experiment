@@ -12,7 +12,11 @@ def run_origin_receiver(host):
 
 def run_receiver(host):
     print(host.name + ' started to work')
-    host.cmd('python3 ../client/receiver.py ' + host.name)
+    host.cmd('python3 ../client/receiver.py ' + host.name + ' &')
+
+def run_sender(host):
+    print(host.name + ' started to send coins')
+    host.cmd('python3 ../client/autosendbot.py ' + host.name)
 
 class Startopo( Topo ):
 	def __init__( self, **opts ):
@@ -27,7 +31,7 @@ class Startopo( Topo ):
                 ip_ = '10.0.0.' + counter
                 mac_ ='00:00:00:00:00:0' + counter
                 host = self.addHost(hostname, ip=ip_, mac=mac_)
-                self.addLink(hostname, s0, bw=1)
+                self.addLink(hostname, s0, bw=0.01)
                 hosts.append(host)
                 
 
@@ -35,7 +39,9 @@ if __name__ == '__main__':
     topo = Startopo()
     net = Mininet(topo, controller=OVSController, link=TCLink)
     net.start()
-    
+    # cli = CLI(net)
+    # net.stop()
+    # exit(1)
     # erase file context
     open('info.log', 'w').close()
     print('Start star topology...\n###################################')
@@ -54,10 +60,19 @@ if __name__ == '__main__':
     t3 = threading.Thread(target=run_receiver, args=(h3,))
     t4 = threading.Thread(target=run_receiver, args=(h4,))
 
+    # sender
+    t2_send = threading.Thread(target=run_sender, args=(h2,))
+    t3_send = threading.Thread(target=run_sender, args=(h3,))
+    t4_send = threading.Thread(target=run_sender, args=(h4,))
+
+
     t1.daemon = True
     t2.daemon = True
     t3.daemon = True
     t4.daemon = True
+    t2_send.daemon = True
+    t3_send.daemon = True
+    t4_send.daemon = True
 
     t1.start()
     print('wait until origin_receiver generates 1 block....')
@@ -72,15 +87,29 @@ if __name__ == '__main__':
     t3.start()
     t4.start()
 
+    print('wait 100 seconds for all nodes to generate their first block (earn money) and send coins....')
+    time.sleep(95)
+    with open('info.log', 'a') as f:
+        f.write('##################start to measure\n')
+    
+    # Start to send coins
+    t2_send.start()
+    t3_send.start()
+    t4_send.start()
 
-    chain_length = 1
-    while (chain_length < 20):
-        with open('info.log', 'r') as f:
-            lines = f.readlines()
-            line = lines[-1].split()
-            chain_length = int(line[2])
-        time.sleep(1)
+    time.sleep(5)
+    print('100 seconds gone, start to record...')
 
-    print('20 blocks have been generated, the experiment is completed, Exit!')
+    
+
+    # chain_length = 1
+    # while (chain_length < 20):
+    #     with open('info.log', 'r') as f:
+    #         lines = f.readlines()
+    #         line = lines[-1].split()
+    #         chain_length = int(line[2])
+    #     time.sleep(1)
+
+    # print('20 blocks have been generated, the experiment is completed, Exit!')
     time.sleep(999999)
     net.stop()
