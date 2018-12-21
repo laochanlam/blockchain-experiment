@@ -49,6 +49,14 @@ def main():
     # POW
     t2 = threading.Thread(target=proof_of_work,args=(public_key, block_chain, tx_pool,s,(network,port),))
     t2.start()  
+
+####################
+    t3 = threading.Thread(target=wait_checking,args=(block_pool, f))
+    t3.start() 
+
+####################
+    t4 = threading.Thread(target=wait_consens args=(block_pool, f, block_chain))
+    t4.start() 
     # runtime
     while True:
         rs,ws,es = select.select(inputs,[],[],0.0) #set timeout 1s
