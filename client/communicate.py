@@ -66,4 +66,20 @@ def update_blockchain_sender(block_chain):
                     # print ('get a broadcast block! from{}'.format(addr))
                     if check_block(block_chain.chain,block_to_add):
                         block_chain.chain.append(block_to_add)
+
+# developing #######################
+def signing_commit(block, commit, public_key):
+    # block
+    # commit: True or False
+    # public_key
+
+def wait_checking(block_pool, f):
+    # wait 2f+1 check info then broadcast a consens info
+    while True:
+
+def wait_consens(block_pool, f, blockchain):
+    # wait 2f+1 consens info then insert block
+    while True:
+
+
             

@@ -49,7 +49,6 @@ def main():
     # POW
     t2 = threading.Thread(target=proof_of_work,args=(public_key, block_chain, tx_pool,s,(network,port),))
     t2.start()  
-
     # runtime
     while True:
         rs,ws,es = select.select(inputs,[],[],0.0) #set timeout 1s
@@ -76,9 +75,12 @@ def main():
                     print ('get a broadcast block! from{}'.format(addr))
                     if check_block(block_chain.chain,block_to_add):
                         print('check block true')
-                        block_chain.chain.append(block_to_add)
+                        # devloping #####################################
+                        #block_chain.chain.append(block_to_add)
+                        signing_commit(block_to_add,True,public_key)
                     else:
                         print('check block false')
+                        signing_commit(block_to_add,False,public_key)
 
 if __name__ == '__main__':
     main()        

@@ -74,11 +74,11 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
             hex_dig = hashlib.sha256(context.encode()).hexdigest()
             if (hex_dig[0:5] == '0'*5):
                 break
-
+        # have been changed ####
         if check_block(block_chain.chain,block_to_add):
-            block_chain.chain.append(block_to_add)
-            print(block_chain.get_last_block().display())
+            #block_chain.chain.append(block_to_add)
+            print(block_to_add.display())
             # broadcast a block
-            send_block(s,block_chain.get_last_block().display(),soc)
+            send_block(s,block_to_add.display(),soc)
         else:
             print('block overtime!')
