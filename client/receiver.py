@@ -89,10 +89,10 @@ def main():
                         # devloping #####################################
                         #block_chain.chain.append(block_to_add)
                         block_pool.append(block_to_add)
-                        signing_commit(block_to_add,True,public_key)
+                        signing_commit(block_to_add,True,private_key)
                     else:
                         print('check block false')
-                        signing_commit(block_to_add,False,public_key)
+                        signing_commit(block_to_add,False,private_key)
 
 if __name__ == '__main__':
     main()        
