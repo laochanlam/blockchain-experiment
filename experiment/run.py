@@ -18,6 +18,10 @@ def run_sender(host):
     print(host.name + ' started to send coins')
     host.cmd('python3 ../client/autosendbot.py ' + host.name)
 
+def run_attacker(host):
+    print(host.name + ' started to work with 33% power' )
+    host.cmd('python3 ../client/receiver_attacker.py ' + host.name)
+
 class Startopo( Topo ):
 	def __init__( self, **opts ):
             Topo.__init__(self, **opts)
@@ -56,23 +60,23 @@ if __name__ == '__main__':
     # origin_receiver
     t1 = threading.Thread(target=run_origin_receiver, args=(h1,))   
     # receiver
-    t2 = threading.Thread(target=run_receiver, args=(h2,))
-    t3 = threading.Thread(target=run_receiver, args=(h3,))
-    t4 = threading.Thread(target=run_receiver, args=(h4,))
+    t2 = threading.Thread(target=run_attacker, args=(h2,))
+    # t3 = threading.Thread(target=run_attacker, args=(h3,))
+    # t4 = threading.Thread(target=run_receiver, args=(h4,))
 
     # sender
-    t2_send = threading.Thread(target=run_sender, args=(h2,))
-    t3_send = threading.Thread(target=run_sender, args=(h3,))
-    t4_send = threading.Thread(target=run_sender, args=(h4,))
+    # t2_send = threading.Thread(target=run_sender, args=(h2,))
+    # t3_send = threading.Thread(target=run_sender, args=(h3,))
+    # t4_send = threading.Thread(target=run_sender, args=(h4,))
 
 
     t1.daemon = True
     t2.daemon = True
-    t3.daemon = True
-    t4.daemon = True
-    t2_send.daemon = True
-    t3_send.daemon = True
-    t4_send.daemon = True
+    # t3.daemon = True
+    # t4.daemon = True
+    # t2_send.daemon = True
+    # t3_send.daemon = True
+    # t4_send.daemon = True
 
     t1.start()
     print('wait until origin_receiver generates 1 block....')
@@ -84,20 +88,14 @@ if __name__ == '__main__':
     print('Origin receiver already generated 1 blocks, start to work')
 
     t2.start()
-    t3.start()
-    t4.start()
-    print('wait 200 seconds for all nodes to generate their first block (earn money) and send coins....')
-    time.sleep(195)
+    # t3.start()
+    # t4.start()
+
     with open('info.log', 'a') as f:
         f.write('start to measure\n')
-    
-    # Start to send coins
-    t2_send.start()
-    t3_send.start()
-    t4_send.start()
 
     time.sleep(5)
-    print('200 seconds gone, start to record...')
+    print('start to record...')
     time.sleep(200)
     print('recording completed')
     with open('info.log', 'a') as f:
