@@ -1,6 +1,6 @@
-import sys
-import numpy as np
 import pandas as pd
+import sys
+import matplotlib.pyplot as plt
 
 if len(sys.argv) != 2:
     print('Usage : %s <name>' % sys.argv[0])
@@ -8,52 +8,25 @@ if len(sys.argv) != 2:
 
 filename = sys.argv[1]
 
-with open(filename, 'r') as f:
-    lines = f.readlines()
+with open(filename, "r") as file:
+    data = [[x for x in line.split()] for line in file]
+
+#  = [data]
+
+print(data)
+
+unit = 10000
+index = ['0.01 Mbit', '0.05 Mbit', '0.1 Mbit']
+delay = [data[0][0], data[1][0]
+        , data[2][0]]
+num_fork = [data[0][1], data[1][1], data[2][1]]
+num_block = [data[0][2], data[1][2], data[2][2]]
+
+df = pd.DataFrame({'Network Delay': delay, 'Number of Forks': num_fork,
+                   'Number of Blocks Generated': num_block}, index=index).astype(float)
 
 
-# determined start and end line
-for i, line in enumerate(lines):
-    if line.startswith('start'):
-        startlineIndex = i
-    if line.startswith('end'):
-        endlineIndex = i
-        break
+print(df)
 
-# print(lines)
-lines = lines[startlineIndex+1:endlineIndex]
-
-num_fork = 0
-num_send = 0
-delaytime_list = []
-
-for i, line in enumerate(lines):
-    line = line.split()
-    if (line[1] == 'fork'):
-        num_fork += 1
-    if (line[1] == 'send'):
-        num_send += 1
-        send_time = float(line[3])
-        j = i + 1
-        while True:
-            predict_line = lines[j].split()
-            if (predict_line[1] == 'receive'):
-                receive_time = float(predict_line[3])
-                delaytime_list.append(receive_time - send_time)
-                break
-            j += 1
-
-#     num_block_upper = max(int(line[2]), num_block_upper)
-#     num_block_lower = min(int(line[2]), num_block_lower)
-
-# num_block = num_block_upper - num_block_lower
-
-# print(num_block_upper)
-# print(num_block_lower)
-delaytime_list = np.array(delaytime_list)
-# print(delaytime_list)
-print('Delay time: ' + str(delaytime_list.mean()))
-print('Num of Fork: ' + str(num_fork))
-print('Num of Block generated: ' + str(num_send))
-        # while (!line.startswith('end')):
-
+df.plot.bar(rot=0, subplots=True, logy=False, title='Network Bandwidth')
+plt.show()
