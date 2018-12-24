@@ -15,7 +15,7 @@ from transaction import *
 
 myname = sys.argv[len(sys.argv)-1]
 addr,private_key,public_key = get_addr_key(myname)
-
+f = 1
 block_chain = get_whole_chain()
 t = threading.Thread(target=update_blockchain_sender,args=(block_chain,f))
 t.start()  # update blockchain 

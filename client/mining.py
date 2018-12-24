@@ -60,6 +60,11 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
 
         pre_previous_block = None
         while True:
+            while ((not tx_pool.isempty()) and (len(current_transactions)<9)): 
+                add = tx_pool.pop(block_chain.chain)
+                if (add != None):
+                    current_transactions.insert(0,add)
+                    current_transactions = handle_overlay(current_transactions)
             if len(block_chain.chain) != 0:
                 previous_block = block_chain.get_last_block()
                 # handle transaction overtime caused by block updating
@@ -77,7 +82,8 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
         # have been changed ####
         if check_block(block_chain.chain,block_to_add):
             #block_chain.chain.append(block_to_add)
-            print(block_to_add.display())
+            #print(block_to_add.display())
+            print('successfully mining a block , now sending to consensus......')
             # broadcast a block
             send_message(s,block_to_add.display(),soc)
         else:

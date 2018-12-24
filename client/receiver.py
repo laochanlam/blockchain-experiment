@@ -21,13 +21,14 @@ import sys
   
 def main(): 
     # get addr and publickey
-    if (len(sys.argv) != 3):
-        print('Usage : {} [origin | user] <name>'.format(sys.argv[0]))
+    if (len(sys.argv) != 2):
+        print('Usage : {} <name>'.format(sys.argv[0]))
         sys.exit()
     myname = sys.argv[len(sys.argv)-1]
     addr,private_key,public_key = get_addr_key(myname)
 
     tx_pool = Pool()
+    '''
     if sys.argv[1] == 'origin':
         block_chain = Blockchain()
     elif sys.argv[1] == 'user':
@@ -35,9 +36,10 @@ def main():
     else:
         print('Usage : {} [origin | user] <name>'.format(sys.argv[0]))
         sys.exit()
-
+    '''
+    block_chain = Blockchain()
     block_pool = []
-    f = 2
+    f = 1
 
     t1 = threading.Thread(target=send_blockchain,args=(block_chain,))
     t1.start()  # send blockchain 
@@ -54,11 +56,11 @@ def main():
     t2.start()  
 
 ####################
-    t3 = threading.Thread(target=wait_checking,args=(block_pool, f))
+    t3 = threading.Thread(target=wait_checking,args=(block_pool, f, private_key))
     t3.start() 
 
 ####################
-    t4 = threading.Thread(target=wait_consens args=(block_pool, f, block_chain))
+    t4 = threading.Thread(target=wait_consens, args=(block_pool, f, block_chain, 'miner'))
     t4.start() 
     # runtime
     while True:
@@ -86,9 +88,7 @@ def main():
                     print ('get a broadcast block! from{}'.format(addr))
                     if check_block(block_chain.chain,block_to_add):
                         print('check block true')
-                        # devloping #####################################
-                        #block_chain.chain.append(block_to_add)
-                        block_pool.append(block_to_add)
+                        block_pool.append((block_to_add,0,0,0,0))
                         signing_commit(block_to_add,True,private_key)
                     else:
                         print('check block false')
