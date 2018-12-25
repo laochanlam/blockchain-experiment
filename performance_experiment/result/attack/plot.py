@@ -28,7 +28,9 @@ with open(filename, 'r') as f:
 # delaytime_list = []
 i = 0
 j = 0
-pre_miner = '8828'
+pre_miner = ''
+pre_pre_miner = ''
+pre_pre_pre_miner = ''
 attackSuccessFlag = False
 success_count = 0
 fail_count = 0
@@ -42,11 +44,16 @@ while i < len(lines):
                 # print("Bingo")
                 break
             elif (line[1] == 'send'):
-                if (line[0] == '8828') & (pre_miner == '8828'):
+                if ((line[0] == '8828') | (line[0] == '8851')   | (line[0] == '8852')) & ((pre_miner == '8828') | (pre_miner == '8851')  | (pre_miner == '8852')) & ((pre_pre_miner == '8828') | (pre_pre_miner == '8851')  | (pre_pre_miner == '8852')) & ((pre_pre_pre_miner == '8828') | (pre_pre_pre_miner == '8851')  | (pre_pre_pre_miner == '8852')):
                     # print(line[0] + 'attack success')
                     attackSuccessFlag = True
+                    pre_pre_pre_miner = pre_pre_miner
+                    pre_pre_miner = pre_miner
                     pre_miner = line[0]
+
                 else:
+                    pre_pre_pre_miner = pre_pre_miner
+                    pre_pre_miner = pre_miner
                     pre_miner = line[0]
             i += 1
         if (attackSuccessFlag):
