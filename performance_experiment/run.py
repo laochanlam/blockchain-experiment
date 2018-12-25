@@ -12,7 +12,8 @@ def run_origin_receiver(host):
 
 def run_receiver(host):
     print(host.name + ' started to work')
-    host.cmd('python3 ../client/receiver.py ' + host.name + ' &')
+    msg = host.cmd('python3 ../client/receiver.py ' + host.name )
+    print(msg)
 
 def run_sender(host):
     print(host.name + ' started to send coins')
@@ -31,7 +32,7 @@ class Startopo( Topo ):
                 ip_ = '10.0.0.' + counter
                 mac_ ='00:00:00:00:00:0' + counter
                 host = self.addHost(hostname, ip=ip_, mac=mac_)
-                self.addLink(hostname, s0, bw=0.1)
+                self.addLink(hostname, s0, bw=1)
                 hosts.append(host)
                 
 
@@ -53,26 +54,29 @@ if __name__ == '__main__':
     h2 = net.get('h2')
     h3 = net.get('h3')
     h4 = net.get('h4')
+    h5 = net.get('h5')
     # origin_receiver
     t1 = threading.Thread(target=run_origin_receiver, args=(h1,))   
     # receiver
     t2 = threading.Thread(target=run_receiver, args=(h2,))
     t3 = threading.Thread(target=run_receiver, args=(h3,))
     t4 = threading.Thread(target=run_receiver, args=(h4,))
+    # t5 = threading.Thread(target=run_receiver, args=(h5,))
 
     # sender
-    t2_send = threading.Thread(target=run_sender, args=(h2,))
-    t3_send = threading.Thread(target=run_sender, args=(h3,))
-    t4_send = threading.Thread(target=run_sender, args=(h4,))
+    # t2_send = threading.Thread(target=run_sender, args=(h2,))
+    # t3_send = threading.Thread(target=run_sender, args=(h3,))
+    # t4_send = threading.Thread(target=run_sender, args=(h4,))
 
 
     t1.daemon = True
     t2.daemon = True
     t3.daemon = True
     t4.daemon = True
-    t2_send.daemon = True
-    t3_send.daemon = True
-    t4_send.daemon = True
+    # t5.daemon = True  
+    # t2_send.daemon = True
+    # t3_send.daemon = True
+    # t4_send.daemon = True
 
     t1.start()
     print('wait until origin_receiver generates 1 block....')
@@ -83,25 +87,30 @@ if __name__ == '__main__':
     
     print('Origin receiver already generated 1 blocks, start to work')
 
-    t2.start()
+    t2.start()    
     t3.start()
     t4.start()
-    print('wait 200 seconds for all nodes to generate their first block (earn money) and send coins....')
-    time.sleep(195)
-    with open('info.log', 'a') as f:
-        f.write('start to measure\n')
-    
-    # Start to send coins
-    t2_send.start()
-    t3_send.start()
-    t4_send.start()
+    # t5.start()
 
-    time.sleep(5)
-    print('200 seconds gone, start to record...')
-    time.sleep(200)
-    print('recording completed')
-    with open('info.log', 'a') as f:
-        f.write('end of measure\n')
+    i = 0
+
+    while True:
+        print('wait 10 seconds for all nodes to generate their first block (earn money) and send coins....')
+        time.sleep(10)
+        print('This is the ' + str(i) + ' time.')
+        with open('info.log', 'a') as f:
+            f.write('start to measure\n')
+        
+        print('start to record...')
+        time.sleep(100)
+        print('100 seconds gone, continue to record...')
+        with open('info.log', 'a') as f:
+            f.write('half end of measure\n')
+        time.sleep(100)
+        print('recording completed')
+        with open('info.log', 'a') as f:
+            f.write('end of measure\n') 
+        i += 1
     # chain_length = 1
     # while (chain_length < 20):
     #     with open('info.log', 'r') as f:
