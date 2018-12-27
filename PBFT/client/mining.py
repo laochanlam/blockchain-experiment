@@ -77,7 +77,7 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
             nonce += 1
             context = json.dumps(block_to_add.display())
             hex_dig = hashlib.sha256(context.encode()).hexdigest()
-            if (hex_dig[0:5] == '0'*5):
+            if (hex_dig[0:6] == '0'*6):
                 break
         # have been changed ####
         if check_block(block_chain.chain,block_to_add):

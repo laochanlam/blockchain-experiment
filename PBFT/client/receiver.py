@@ -1,10 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
-'''
-    矿机，用来挖矿以及接收和广播消息
-    origin 
-    user
-'''
+
 import socket               # 导入 socket 模块
 import json
 import select
@@ -28,15 +24,7 @@ def main():
     addr,private_key,public_key = get_addr_key(myname)
 
     tx_pool = Pool()
-    '''
-    if sys.argv[1] == 'origin':
-        block_chain = Blockchain()
-    elif sys.argv[1] == 'user':
-        block_chain = get_whole_chain()
-    else:
-        print('Usage : {} [origin | user] <name>'.format(sys.argv[0]))
-        sys.exit()
-    '''
+
     block_chain = Blockchain()
     block_pool = []
     f = 1

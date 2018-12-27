@@ -93,7 +93,6 @@ def signing_commit(block, commit, secret_key):
         'cm': True
     }
     plain_msg = msg['bh']
-    print(msg['bh'])
     rsakey = RSA.importKey(secret_key.encode())
     signer = Signature_pkcs1_v1_5.new(rsakey)
     digest = SHA.new(plain_msg.encode())
