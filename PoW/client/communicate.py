@@ -6,11 +6,14 @@ from block import Block
 from transaction import *
 import time
 import os
+import sys
 
 def send_block(s,block,socket):
     with open('info.log', 'a') as f:
         f.write('%s\t%s\t%s\t%s\n' % (os.getpid(), 'send', str(block['index']), str(time.time())))
     print("[Send block "  + str(block['index']) + ' at: ' + str(time.time()) + ']')
+    print(json.dumps(block, indent=4))
+    print('######################size of block:  ' + str(sys.getsizeof(json.dumps(block))))
     s.sendto(bytes(json.dumps(block),'utf-8'),socket)
 
 def send_blockchain(block_chain):
