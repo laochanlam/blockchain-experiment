@@ -11,6 +11,7 @@ from Crypto.Cipher import PKCS1_v1_5 as Cipher_pkcs1_v1_5
 from Crypto.Signature import PKCS1_v1_5 as Signature_pkcs1_v1_5
 from Crypto.PublicKey import RSA
 import base64
+import time
 
 def send_message(s,msg,socket):
     s.sendto(bytes(json.dumps(msg),'utf-8'),socket)
@@ -82,7 +83,7 @@ def update_blockchain_sender(block_chain,f):
                         block_pool.append((block_to_add,0,0,0,0))
 
 # developing #######################
-def signing_commit(block, commit, secret_key):
+def signing_commit(block, commit, secret_key, name):
     # block
     # commit: True or False
     # public_key
@@ -100,7 +101,8 @@ def signing_commit(block, commit, secret_key):
     signature = base64.b64encode(sign)
     sign = {
          'message': msg,
-         'signature': signature.decode()
+         'signature': signature.decode(),
+         'name': name
     }
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) 
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -111,7 +113,7 @@ def signing_commit(block, commit, secret_key):
     send_message(s,sign,soc)
 
 
-def wait_checking(block_pool, f, secret_key):
+def wait_checking(block_pool, f, secret_key, myname):
     # wait 2f+1 check info then broadcast a consens info
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) 
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -137,20 +139,20 @@ def wait_checking(block_pool, f, secret_key):
             commit = receive['message']['cm']
             rec_sign = receive['signature']
             message = receive['message']['bh']
+            name = receive['name']
             is_verify = False
-            verifier = []
             # verify the signature
-            with open('../pbft/members-public.pem') as pbft:
-                members = pbft.read().split('\\\n')
-            for i, val in enumerate(members):
-                rsakey = RSA.importKey(val.encode())
-                verifier.append(Signature_pkcs1_v1_5.new(rsakey))
+            with open('../userKey/' + name + '-public.pem') as pbft:
+                member = pbft.read()
+            #print(member)
+            rsakey = RSA.importKey(member.encode())
+            verifier = Signature_pkcs1_v1_5.new(rsakey)
             # Assumes the data is base64 encoded to begin with
             digest = SHA.new(message.encode())
-            for i, val in enumerate(members):
-                is_verify = verifier[i].verify(digest, base64.b64decode(receive['signature']))
-                if (is_verify):
-                    break
+            try:
+                is_verify = verifier.verify(digest, base64.b64decode(receive['signature']))
+            except ValueError:
+                is_verify = False      
             #is_verify == true
             if(is_verify):
                 #To find the block
@@ -161,7 +163,7 @@ def wait_checking(block_pool, f, secret_key):
                         else:
                             val = (val[0],val[1],val[2]+1,val[3],val[4])
                         block_pool[i] = val
-                        if(val[1] + val[2] > 3 * f):
+                        if(val[1]  > 2 * f or val[2] > 2 * f):
                             if (val[1] > val[2]):
                                commit = True
                             else:
@@ -176,7 +178,8 @@ def wait_checking(block_pool, f, secret_key):
                             signature = base64.b64encode(sign)
                             consens_msg = {
                                 'message': msg,
-                                'signature': signature.decode()
+                                'signature': signature.decode(),
+                                'name': myname
                             }
                             send_message(s,consens_msg,soc)
             
@@ -198,20 +201,19 @@ def wait_consens(block_pool, f, blockchain, mode):
             commit = receive['message']['cm']
             rec_sign = receive['signature']
             message = receive['message']['bh']
+            name = receive['name']
             is_verify = False
             # verify the signature
-            verifier = []
-            with open('../pbft/members-public.pem') as pbft:
-                members = pbft.read().split('\\\n')
-            for i, val in enumerate(members):
-                rsakey = RSA.importKey(val.encode())
-                verifier.append(Signature_pkcs1_v1_5.new(rsakey))
+            with open('../userKey/' + name + '-public.pem') as pbft:
+                member = pbft.read()          
+            rsakey = RSA.importKey(member.encode())
+            verifier = Signature_pkcs1_v1_5.new(rsakey)
             # Assumes the data is base64 encoded to begin with
             digest = SHA.new(message.encode())
-            for i, val in enumerate(members):
-                is_verify = verifier[i].verify(digest, base64.b64decode(receive['signature']))
-                if (is_verify):
-                    break
+            try:
+                is_verify = verifier.verify(digest, base64.b64decode(receive['signature']))
+            except ValueError:
+                is_verify = False
             #is_verify == true
             if(is_verify):
                 #To find the block
@@ -222,13 +224,14 @@ def wait_consens(block_pool, f, blockchain, mode):
                         else :
                             val = (val[0],val[1],val[2],val[3],val[4]+1)
                         block_pool[i] = val
-                        if(val[3] + val[4] > 3 * f):
+                        if(val[3] > 2 * f or val[4] > 2 * f):
                             if(val[3] > val[4]):
                                 blockchain.chain.append(val[0])
                                 if mode == 'miner':
-                                    print(json.dumps(val[0].display(),indent=4))
-                                    print('consensus accept a block!')
+                                    #print('consensus accept a block!')
+                                    print(json.dumps(val[0].display(),indent=4),'\n','consensus accept a block!')
                                     print('the length of the block chain is {}'.format(len(blockchain.chain)))
+                                    time.sleep(1)
                             else:
                                 if mode == 'miner':
                                     print('consensus reject a block!')

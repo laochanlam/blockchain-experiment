@@ -128,7 +128,7 @@ def check_block(blocks, block):
     context = json.dumps(block.display())
     hex_dig = hashlib.sha256(context.encode()).hexdigest()
 
-    if hex_dig[0:6] != '0'*6:
+    if hex_dig[0:5] != '0'*5:
         return False
 
     # verify repeated transactions in one block

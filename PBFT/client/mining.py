@@ -57,9 +57,9 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
 
         current_transactions.append(mining_transaction)
         nonce = 0
-
         pre_previous_block = None
         while True:
+            first = True
             while ((not tx_pool.isempty()) and (len(current_transactions)<9)): 
                 add = tx_pool.pop(block_chain.chain)
                 if (add != None):
@@ -67,17 +67,22 @@ def proof_of_work(my_publickey, block_chain, tx_pool, s, soc):
                     current_transactions = handle_overlay(current_transactions)
             if len(block_chain.chain) != 0:
                 previous_block = block_chain.get_last_block()
+                if first:
+                    block_to_add = Block(previous_block.index + 1,date.datetime.now(), current_transactions, previous_block.getHash(), nonce)
+                    first = False
                 # handle transaction overtime caused by block updating
                 if pre_previous_block != None and previous_block != pre_previous_block:
                     current_transactions = update_transactions(block_chain.chain,current_transactions)
+                    block_to_add = Block(previous_block.index + 1,date.datetime.now(), current_transactions, previous_block.getHash(), nonce)
                 pre_previous_block = previous_block
-                block_to_add = Block(previous_block.index + 1,date.datetime.now(), current_transactions, previous_block.getHash(), nonce)
+                block_to_add.datetime = date.datetime.now()
+                block_to_add.nonce = nonce
             else:
                 block_to_add = Block(0,date.datetime.now(), current_transactions, 0, nonce)
             nonce += 1
             context = json.dumps(block_to_add.display())
             hex_dig = hashlib.sha256(context.encode()).hexdigest()
-            if (hex_dig[0:6] == '0'*6):
+            if (hex_dig[0:5] == '0'*5):
                 break
         # have been changed ####
         if check_block(block_chain.chain,block_to_add):

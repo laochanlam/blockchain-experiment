@@ -44,7 +44,7 @@ def main():
     t2.start()  
 
 ####################
-    t3 = threading.Thread(target=wait_checking,args=(block_pool, f, private_key))
+    t3 = threading.Thread(target=wait_checking,args=(block_pool, f, private_key, myname))
     t3.start() 
 
 ####################
@@ -77,10 +77,10 @@ def main():
                     if check_block(block_chain.chain,block_to_add):
                         print('check block true')
                         block_pool.append((block_to_add,0,0,0,0))
-                        signing_commit(block_to_add,True,private_key)
+                        signing_commit(block_to_add,True,private_key,myname)
                     else:
                         print('check block false')
-                        signing_commit(block_to_add,False,private_key)
+                        signing_commit(block_to_add,False,private_key,myname)
 
 if __name__ == '__main__':
     main()        
