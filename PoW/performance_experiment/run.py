@@ -111,14 +111,6 @@ if __name__ == '__main__':
         with open('info.log', 'a') as f:
             f.write('end of measure\n') 
         i += 1
-    # chain_length = 1
-    # while (chain_length < 20):
-    #     with open('info.log', 'r') as f:
-    #         lines = f.readlines()
-    #         line = lines[-1].split()
-    #         chain_length = int(line[2])
-    #     time.sleep(1)
 
-    # print('20 blocks have been generated, the experiment is completed, Exit!')
     time.sleep(999999)
     net.stop()

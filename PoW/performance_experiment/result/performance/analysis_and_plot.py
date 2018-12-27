@@ -43,17 +43,10 @@ for i, line in enumerate(lines):
                 break
             j += 1
 
-#     num_block_upper = max(int(line[2]), num_block_upper)
-#     num_block_lower = min(int(line[2]), num_block_lower)
-
-# num_block = num_block_upper - num_block_lower
-
-# print(num_block_upper)
-# print(num_block_lower)
 delaytime_list = np.array(delaytime_list)
 # print(delaytime_list)
 print('Delay time: ' + str(delaytime_list.mean()))
 print('Num of Fork: ' + str(num_fork))
 print('Num of Block generated: ' + str(num_send))
-        # while (!line.startswith('end')):
+
 
